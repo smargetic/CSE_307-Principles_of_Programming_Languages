@@ -1,0 +1,52 @@
+:- table(state/6).
+
+state(a, c, h, l, up, i).
+
+%state(A, B, C, D, E, F).
+
+%walk to the lever
+state(L, C,H,L, up, walk(J,L,S)):-
+    state(J,C,H,L,up,S),
+    J\=L.
+
+%pull the lever
+state(L,C,H,L,down,pull(walk(J,L,S))):-
+    state(L,C,H,L,up,walk(J,L,S)).
+
+%walk to the crate
+state(C, C,H,L, down, walk(L,C,pull(walk(J,L,S)))):-
+    state(L,C,H,L,down,pull(walk(J,L,S))),
+    L\=C.
+
+%push the crate to the hole
+state(C,H,H,L,down,push(C,H,walk(L,C,pull(walk(J,L,S))))):-
+    state(C,C,H,L,down,walk(L,C,pull(walk(J,L,S)))).
+
+%walks to crate and hole
+state(H,H,H,L,down,walk(C,H, push(C,H,walk(L,C,pull(walk(J,L,S)))))):-
+   state(C,H,H,L,down,push(C,H,walk(L,C,pull(walk(J,L,S))))),
+   C\=H.
+
+%climb
+state(H,H,H,L,down,climb(walk(C,H,push(C,H,walk(L,C,pull(walk(J,L,S))))))):-
+    state(H,H,H,L,down,walk(C,H,push(C,H,walk(L,C,pull(walk(J,L,S)))))).
+
+%whiplash
+state(H,H,H,L,down,whiplash(climb(walk(C,H,push(C,H,walk(L,C,pull(walk(J,L,S)))))))):-
+    state(H,H,H,L,down,climb(walk(C,H,push(C,H,walk(L,C,pull(walk(J,L,S))))))).
+
+escape(whiplash(climb(walk(C,H,push(C,H,walk(L,C,pull(walk(J,L,S)))))))):- 
+    state(H,H,H,L,down,whiplash(climb(walk(C,H,push(C,H,walk(L,C,pull(walk(J,L,S)))))))).
+
+
+
+
+
+
+
+
+
+
+
+
+
